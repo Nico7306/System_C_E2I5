@@ -1,0 +1,49 @@
+## Variable that points to SystemC installation path
+SYSTEMC = /home/nico/Downloads/systemc
+
+
+
+INCDIR = -I. -I.. -I$(SYSTEMC)/include
+#LIBDIR = -L. -L.. -L$(SYSTEMC)/lib-$(TARGET_ARCH)
+#redhat6
+#LIBDIR = -L. -L.. -L$(SYSTEMC)/lib-$(TARGET_ARCH) -L/usr/lib/x86_64-redhat-linux5E/lib64
+#LIBDIR = -L. -L.. -L$(SYSTEMC)/lib-$(TARGET_ARCH)
+##redhat 7
+LIBDIR = -L. -L.. -L$(SYSTEMC)/lib-$(TARGET_ARCH) -L/usr/lib/x86_64-redhat-linux6E/lib64 -L/usr/lib/gcc/x86_64-redhat-linux/4.4.7
+#LIBDIR = -L. -L.. -L$(SYSTEMC)/lib-$(TARGET_ARCH) -L/usr/lib/x86_64-redhat-linux6E/lib64  -L/usr/lib/gcc/x86_64-redhat-linux/4.8.2
+
+
+
+#old
+#LIBDIR = -L. -L.. -L/lib  -L$(SYSTEMC)/lib-$(TARGET_ARCH) -L/lib64  -L/usr/lib -L/usr/lib/x86_64-redhat-linux5E/lib64 -L/usr/lib64
+#LIBDIR = -L. -L.. -L$(SYSTEMC)/lib-$(TARGET_ARCH) -L/usr/lib64   -L/lib64 -L/usr/lib/x86_64-redhat-linux5E/lib64  -L/usr/lib64
+#LIBDIR = -L. -L.. -L$(SYSTEMC)/lib-$(TARGET_ARCH) -L/usr/lib64 -L/lib64 -L/usr/lib/x86_64-redhat-linux5E/lib64 
+
+
+
+LIBS   =  -lsystemc -lm $(EXTRA_LIBS) -lpthread
+
+
+EXE    = $(MODULE).x
+
+.SUFFIXES: .cc .cpp .o .x
+
+$(EXE): $(OBJS) $(SYSTEMC)/lib-$(TARGET_ARCH)/libsystemc.a 
+	$(CC) $(CFLAGS) $(INCDIR) $(LIBDIR) -o $@ $(OBJS) $(LIBS) 2>&1 | c++filt
+
+.cpp.o:
+	$(CC) $(CFLAGS) $(INCDIR) -c $<
+
+.cc.o:
+	$(CC) $(CFLAGS) $(INCDIR) -c $<
+
+clean::
+	rm -f $(OBJS) *~ $(EXE) core
+
+ultraclean: clean
+	rm -f Makefile.deps
+
+Makefile.deps:
+#	$(CC) $(CFLAGS) $(INCDIR) -M $(SRCS) >> Makefile.deps
+
+#include Makefile.deps
